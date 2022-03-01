@@ -32,7 +32,10 @@ The additional context can be combined with [number matching](how-to-mfa-number-
 
 :::image type="content" border="false" source="./media/howto-authentication-passwordless-phone/location-with-number-match.png" alt-text="Screenshot of additional context with number matching in the MFA push notification.":::
 
-### Policy schema changes 
+### Policy schema changes
+
+>[!NOTE]
+>In Graph Explorer ensure you've consented to the **Policy.Read.All** and **Policy.ReadWrite.AuthenticationMethod** permissions. 
 
 Identify a single target group for the schema configuration. Then use the following API endpoint to change the displayAppInformationRequiredState property to **enabled**:
 
@@ -96,7 +99,7 @@ You need to PATCH the entire includeTarget to prevent overwriting any previous c
             "id": "all_users",
             "authenticationMode": "any",
             "displayAppInformationRequiredState": "enabled",
-            "numberMatchingRequiredState": "enabled"
+            "numberMatchingRequiredState": "default"
         }
     ]
 }
@@ -111,6 +114,9 @@ GET - https://graph.microsoft.com/beta/authenticationMethodsPolicy/authenticatio
  
 Change the **displayAppInformationRequiredState** value from **default** to **enabled.** 
 Change the **id** from **all_users** to the ObjectID of the group from the Azure AD portal.
+
+>[!NOTE]
+>If your organization is currently targeting **All users** for enablement of passwordless, and you enable number matching for a single group, the targeting will now be scoped only to that group for passwordless. You will want to ensure you have another group or groups appropriately scoped to passwordless enablement.
 
 You need to PATCH the entire includeTarget to prevent overwriting any previous configuration. We recommend that you do a GET first, and then update only the relevant fields and then PATCH. The example below only shows the update to the **displayAppInformationRequiredState**. 
 
@@ -131,7 +137,7 @@ You need to PATCH the entire includeTarget to prevent overwriting any previous c
             "id": "1ca44590-e896-4dbe-98ed-b140b1e7a53a",
             "authenticationMode": "any",
             "displayAppInformationRequiredState": "enabled",
-            "numberMatchingRequiredState": "enabled"
+            "numberMatchingRequiredState": "default"
         }
     ]
 }
@@ -168,7 +174,7 @@ To turn off additional context, you'll need to PATCH remove **displayAppInformat
             "targetType": "group",
             "id": "all_users",
             "authenticationMode": "any",
-            "displayAppInformationRequiredState": "enabled",
+            "displayAppInformationRequiredState": "default",
             "numberMatchingRequiredState": "default"
         }
     ]
